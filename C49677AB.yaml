@@ -1,0 +1,126 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+servers:
+  - url: https://u390ss4.ao.nl.abnamro.com:4811/services/CC49677_SERV/C49677AA
+paths:
+  /C49677AB:
+    get:
+      summary: Run query on tdemo1
+      operationId: listData
+      tags:
+        - campagne
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 1000)
+          required: false
+          schema:
+            type: integer
+            maximum: 1000
+            format: int32
+      responses:
+        '200':
+          description: A paged array of data
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Campagnes"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a Campagne
+      operationId: createCampagne
+      tags:
+        - campagnes
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /campagnes/{campagneId}:
+    get:
+      summary: Info for a specific Campagne
+      operationId: showCampagneById
+      tags:
+        - campagne
+      parameters:
+        - name: campagne_id
+          in: path
+          required: true
+          description: The id of the Campagne to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campagne"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Campagne:
+      type: object
+      required:
+        - campagne_id
+      properties:
+        campagne_id:
+          type: integer
+          format: int32
+        rekeningnummer:
+          type: interger
+          format: int64
+        transactiedatum:
+          type: string
+        transactiesoort:
+          type: string
+        dat_reg_afrek:
+          type: string
+        settlement_bedrag:
+          type: number
+          format: float
+        fondscode:
+          type: string
+        fondstype:
+          type: string
+        datum_insert:
+          type: string
+    Campagnes:
+      type: array
+      maxItems: 1000
+      items:
+        $ref: "#/components/schemas/Campagne"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
